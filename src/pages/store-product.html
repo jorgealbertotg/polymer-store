@@ -1,0 +1,63 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="store-product">
+  <template>
+    <style>
+      :host {
+        display: block;
+        border: 5px solid tomato;
+      }
+      img {
+        display: block;
+        width: 100%;
+      }
+    </style>
+    <div on-mouseenter="_hover">
+      <!-- <h2>Producto [[id]] [[src]]</h2> -->
+      <img src$="{{src}}" alt="img">
+      <button on-click="_add">Agregar</button>
+      <button on-click="_remove">Eliminar</button>
+    </div>
+  </template>
+
+  <script>
+    class StoreProduct extends Polymer.Element {
+      static get is() { return 'store-product'; }
+      static get properties() {
+        return {
+          id: {
+            type: String
+          },
+          src: {
+            type: String
+          },
+          pos: {
+            type: Number
+          }
+        };
+      }
+
+      _add() {
+        this.fireEvent('add', {id: this.id});
+      }
+
+      _remove() {
+        this.fireEvent('remove', {id: this.id});
+      }
+
+      _hover() {
+        this.fireEvent('enter', {id: this.id, pos: this.pos});
+      }
+
+      fireEvent(name, detail) {
+        this.dispatchEvent(new CustomEvent(name,{
+          bubbles: true,
+          composed: true,
+          detail: detail
+        }));
+      }
+    }
+
+    window.customElements.define(StoreProduct.is, StoreProduct);
+  </script>
+</dom-module>

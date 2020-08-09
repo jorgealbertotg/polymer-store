@@ -1,0 +1,48 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+
+<dom-module id="store-top">
+  <template>
+    <style>
+      :host {
+        display: block;
+      }
+      div {
+        padding: 20px;
+      }
+      div:nth-child(1) {
+        background-color: skyblue;
+      }
+      div:nth-child(2) {
+        background-color: salmon;
+      }
+      div:nth-child(3) {
+        background-color: plum;
+      }
+    </style>
+    <div>
+
+    </div>
+    <div>
+
+    </div>
+    <div>
+
+    </div>
+  </template>
+
+  <script>
+    class StoreTop extends Polymer.Element {
+      static get is() { return 'store-top'; }
+      static get properties() {
+        return {
+          products: {
+            type: Array
+          }
+        };
+      }
+
+    }
+
+    window.customElements.define(StoreTop.is, StoreTop);
+  </script>
+</dom-module>

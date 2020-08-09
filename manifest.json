@@ -1,0 +1,7 @@
+{
+  "name": "my-application",
+  "short_name": "my-application",
+  "description": "A polytest polymer application",
+  "start_url": "/",
+  "display": "standalone"
+}

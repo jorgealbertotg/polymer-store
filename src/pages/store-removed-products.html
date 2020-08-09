@@ -1,0 +1,61 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../pages/store-product.html">
+
+<dom-module id="store-removed-products">
+  <template>
+    <style>
+      :host {
+        display: block;
+        background-color: skyblue;
+        border: 5px solid blue;
+        border-radius: 20px;
+        padding: 20px;
+      }
+    </style>
+    <h2>Productos removidos</h2>
+    <dom-repeat items="{{products}}">
+      <template>
+        <dom-if if="{{item.removed}}">
+          <template>
+            <store-product on-remove="_removeProduct" id="{{item.id}}" src="{{item.download_url}}"></store-product>
+          </template>
+        </dom-if>
+      </template>
+    </dom-repeat>
+  </template>
+
+  <script>
+    class StoreRemovedProducts extends Polymer.Element {
+      static get is() { return 'store-removed-products'; }
+      static get properties() {
+        return {
+          products: {
+            type: Array,
+            value: []
+          }
+        };
+      }
+
+      _removeProduct(e) {
+        this._modifyProduct(e.detail.id);
+      }
+      
+      _modifyProduct(productId) {
+        this.products.forEach((product, index) => {
+          if (product.id === productId) {
+            const newProduct = { 
+              ...product, 
+              active: true,
+              removed: false
+            };
+            this.splice('products', index, 1, newProduct);
+          }
+        });
+      }
+    }
+
+    window.customElements.define(StoreRemovedProducts.is, StoreRemovedProducts);
+  </script>
+</dom-module>

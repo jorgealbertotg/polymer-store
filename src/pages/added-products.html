@@ -1,0 +1,61 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../pages/store-product.html">
+
+<dom-module id="added-products">
+  <template>
+    <style>
+      :host {
+        display: block;
+        background-color: skyblue;
+        border: 5px solid blue;
+        border-radius: 20px;
+        padding: 20px;
+      }
+    </style>
+    <h2>Productos agregados</h2>
+    <dom-repeat items="{{products}}">
+      <template>
+        <dom-if if="{{item.added}}">
+          <template>
+            <store-product on-remove="_removeProduct" id="{{item.id}}" src="{{item.download_url}}"></store-product>
+          </template>
+        </dom-if>
+      </template>
+    </dom-repeat>
+  </template>
+
+  <script>
+    class AddedProducts extends Polymer.Element {
+      static get is() { return 'added-products'; }
+      static get properties() {
+        return {
+          products: {
+            type: Array,
+            value: []
+          }
+        };
+      }
+
+      _removeProduct(e) {
+        this._modifyProduct(e.detail.id);
+      }
+      
+      _modifyProduct(productId) {
+        this.products.forEach((product, index) => {
+          if (product.id === productId) {
+            const newProduct = { 
+              ...product, 
+              active: true,
+              added: false
+            }
+            this.splice('products', index, 1, newProduct);
+          }
+        });
+      }
+    }
+
+    window.customElements.define(AddedProducts.is, AddedProducts);
+  </script>
+</dom-module>

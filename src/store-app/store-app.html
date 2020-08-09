@@ -1,0 +1,254 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<link rel="import" href="../pages/store-top-products.html">
+<link rel="import" href="../pages/store-products.html">
+<link rel="import" href="../pages/added-products.html">
+<link rel="import" href="../pages/store-removed-products.html">
+
+<dom-module id="store-app">
+  <template>
+    <style>
+      :host {
+        display: block;
+        border: 5px solid tomato;
+      }
+      app-toolbar {
+        background-color: #1E88E5;
+        color: white;
+      }
+      li {
+        display: inline-block;
+      }
+      div {
+        border: 5px solid palevioletred;
+      }
+      .log {
+        background-color: #111;
+        color: #fff;
+        font-size: 15px;
+      }
+      .log p {
+        margin: 1px 0;
+        padding: 0;
+      }
+    </style>
+    <app-location route="{{route}}"></app-location>
+    <iron-ajax
+      auto 
+      url="https://picsum.photos/v2/list?page=1&limit=10" 
+      last-response="{{items}}"></iron-ajax>
+    <app-route
+      route="{{route}}" 
+      pattern="/:page" 
+      data="{{data}}" 
+      tail="{{tail}}"></app-route>
+    <app-drawer-layout force-narrow>
+      <app-drawer id="drawer" slot="drawer">
+        <p>Uno</p>
+        <p>Uno</p>
+        <p>Uno</p>
+        <p>Uno</p>
+      </app-drawer>
+
+      <app-header-layout>
+        <app-header condenses fixed slot="header">
+          <app-toolbar>
+            <!-- <button drawer-toggle hidden$="{{queryMatches}}">Menu</button> -->
+            <h1>Cabecera [[fruits.0]] [[_getFruit(fruits.*, 0)]]</h1>
+            <h2 spacer>Usuario [[user.name]] </h2>
+          </app-toolbar>
+          <app-toolbar>
+            <nav>
+              <ul>
+                <li><a href="/p1">Top</a></li>
+                <li><a href="/p2">Productos</a></li>
+                <li><a href="/p3">Productos agregados</a></li>
+                <li><a href="/p4">Productos eliminados</a></li>
+              </ul>
+            </nav>
+            <p>[[products.0.active]]</p>
+            <p>{{_getProduct(products.*, 0)}}</p>
+          </app-toolbar>
+        </app-header>
+      </app-header-layout>
+      <div>
+        <!-- <h2>Hello [[_productsCount(products)]]</h2> -->
+        <h2>Hello {{total}}</h2>
+        <div class="log">
+          <dom-repeat items="{{products}}">
+            <template>
+              <p>{{item.id}} {{item.active}} {{item.added}} {{item.removed}}</p>
+            </template>
+          </dom-repeat>
+        </div>
+        <iron-pages selected="[[data.page]]" attr-for-selected="page">
+          <!-- <p page="p1">Productos 1</p> -->
+          <store-top-products page="p1" route="{{route}}"></store-top-products>
+          <store-products page="p2" products="{{products}}" on-enter="_handleEnter"></store-products>
+          <added-products page="p3" products="{{products}}"></added-products>
+          <store-removed-products page="p4" products="{{products}}"></store-removed-products>
+        </iron-pages>
+      </div>
+    </app-drawer-layout>
+    <iron-media-query query="(min-width: 600px)" query-matches="{{queryMatches}}">
+    </iron-media-query>
+  </template>
+
+  <script>
+    class StoreApp extends Polymer.Element {
+      static get is() { return 'store-app'; }
+      static get properties() {
+        return {
+          queryMatches: {
+            type: Boolean,
+            value: false
+          },
+          route: {
+            type: Object
+          },
+          data: {
+            type: Object
+          },
+          tail: {
+            type: Object
+          },
+          products: {
+            type: Array,
+            value: [
+              // {id: 'M9azo2', active: true, added: false, removed: false},
+              // {id: 'pZybo1', active: true, added: false, removed: false},
+              // {id: 'lWcwo3', active: true, added: false, removed: false},
+              // {id: 'u00do4', active: true, added: false, removed: false},
+              // {id: 'u3ue22', active: true, added: false, removed: false},
+              // {id: 'uXtf65', active: true, added: false, removed: false},
+              // {id: 'vuhz78', active: true, added: false, removed: false},
+              // {id: 'Eurid5', active: true, added: false, removed: false},
+              // {id: '0fnd4o', active: true, added: false, removed: false},
+              // {id: 'pun3d7', active: true, added: false, removed: false},
+              // {id: 'ufnohr', active: true, added: false, removed: false},
+              // {id: '1uode5', active: true, added: false, removed: false},
+              // {id: 'uxnt56', active: true, added: false, removed: false}
+            ],
+            computed: '_products(items)'
+          },
+          total: {
+            type: String,
+            value: 0
+          },
+          items: {
+            type: Array
+          },
+          hovered: {
+            type: String
+          },
+          fruits: {
+            type: Array,
+            value: [
+              'apple',
+              'banana',
+              'orange'
+            ]
+          },
+          user: {
+            type: Object,
+            value: {
+              name: 'Jorge',
+              status: 'active'
+            }
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_changeProducts(products.splices)'
+        ];
+      }
+
+      _products(items) {
+        console.log(items);
+        return items.map((product, index) => {
+          return { ...product, active: true, added: false, removed: false };
+        });
+      }
+
+      _changeProducts(c) {
+        this.total = this._productsCount();
+      }
+
+      _onLayoutChange(wide) {
+        var drawer = this.$.drawer;
+        if (wide && drawer.opened) {
+          drawer.opened = false;
+        }
+      }
+
+      _productsCount() {
+        const count = this._getProductsCount();
+        const added = this._getAddedProductsCount();
+        const removed = this._getRemovedProductsCount();
+
+        return `Productos: ${count} Removed: ${removed} Added: ${added}`;
+      }
+
+      _getProductsCount() {
+        return this._getProductsCountByProperty('active');
+      }
+
+      _getAddedProductsCount() {
+        return this._getProductsCountByProperty('added');
+      }
+
+      _getRemovedProductsCount() {
+        return this._getProductsCountByProperty('removed');
+      }
+
+      _getProductsCountByProperty(prop) {
+        return this.products.reduce((total, product) => {
+          if (product[prop]) {
+            total += 1;
+          }
+          return total;
+        }, 0);
+      }
+
+      _handleEnter(e) {
+        this.hovered = e.detail.pos;
+      }
+
+      /* BINDING A PROPERTY FROM AN ARRAY ELEMENT */
+      _getProduct(products, index) {
+        if (!products.base[index]) {
+          return;
+        }
+        return products.base[index].active;
+      }
+
+      ready() {
+        super.ready();
+        setInterval(() => {
+          this.fruits[0] = new Date().toLocaleString();
+          // this.set('user.name', new Date().getSeconds());
+          this.user.name = `Jorge ${new Date().getSeconds()}`;
+          this.notifyPath('user.name');
+
+          this.splice('fruits', 0, 1, `apple ${new Date().getSeconds()}`);
+        },
+        3000);
+      }
+
+      _getFruit(fruits, index) {
+        return fruits.base[index];
+      }
+    }
+
+    window.customElements.define(StoreApp.is, StoreApp);
+  </script>
+</dom-module>

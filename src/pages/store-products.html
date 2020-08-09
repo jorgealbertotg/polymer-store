@@ -1,0 +1,91 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-repeat.html">
+<link rel="import" href="../../bower_components/polymer/lib/elements/dom-if.html">
+<link rel="import" href="../pages/store-product.html">
+
+<dom-module id="store-products">
+  <template>
+    <style>
+      :host {
+        display: block;
+        background-color: skyblue;
+        border: 5px solid blue;
+        border-radius: 20px;
+        padding: 20px;
+      }
+      div {
+        border: 5px solid yellow;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+    </style>
+    <h2>Productos</h2>
+    <div>
+      <dom-repeat items="{{products}}">
+        <template>
+          <dom-if if="{{item.active}}">
+            <template>
+              <store-product on-add="_handleAdd" on-remove="_handleRemove" id="{{item.id}}" src="{{item.download_url}}" pos="{{index}}" on-enter="_handleEnter"></store-product>
+            </template>
+          </dom-if>
+        </template>
+      </dom-repeat>
+    </div>
+  </template>
+
+  <script>
+    class StoreProducts extends Polymer.Element {
+      static get is() { return 'store-products'; }
+      static get properties() {
+        return {
+          products: {
+            type: Array,
+            value: [],
+            observer: '_productsChange'
+          }
+        };
+      }
+
+      _handleAdd(e) {
+        this._modifyProduct(e.detail.id, 'add');
+      }
+
+      _handleRemove(e) {
+        this._modifyProduct(e.detail.id, 'remove');
+      }
+
+      _handleEnter(e) {
+        this.dispatchEvent(new CustomEvent('enter',{
+          bubbles: true,
+          composed: true,
+          detail: e.detail
+        }));        
+      }
+
+      _modifyProduct(productId, action) {
+        this.products.forEach((product, index) => {
+          if (product.id === productId) {
+            const newProduct = { 
+              ...product, 
+              active: false,
+              added: action === 'add',
+              removed: action === 'remove'
+            }
+            this.splice('products', index, 1, newProduct);
+          }
+        });
+      }
+
+      ready() {
+        super.ready();
+        console.log(this.products);
+      }
+
+      _productsChange() {
+        console.log('products',this.products);
+      }
+    }
+
+    window.customElements.define(StoreProducts.is, StoreProducts);
+  </script>
+</dom-module>

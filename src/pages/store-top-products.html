@@ -1,0 +1,67 @@
+<link rel="import" href="../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../pages/store-product.html">
+<link rel="import" href="../pages/store-top.html">
+
+<dom-module id="store-top-products">
+  <template>
+    <style>
+      :host {
+        display: block;
+        background-color: yellowgreen;
+        border: 3px solid green;
+      }
+      .content {
+        border: 1px solid red;
+        background-color: pink;
+        padding: 20px;
+      }
+    </style>
+    <h2>Productos 1</h2>
+    <app-route
+      route="{{route}}" 
+      pattern="/p1/:page"
+      data="{{data}}" 
+      tail="{{tail}}"></app-route>
+    <div>
+      <nav>
+        <ul>
+          <li><a href="/p1/p5">Productos 5</a></li>
+          <li><a href="/p1/p6">Productos 6</a></li>
+          <li><a href="/p1/p7">Productos 7</a></li>
+          <li><a href="/p1/p8">Productos 8</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="content">
+      <iron-pages selected="[[data.page]]" attr-for-selected="page">
+        <!-- <p page="p5">Productos 5</p> -->
+        <store-top page="p5"></store-top>
+        <p page="p6">Productos 6</p>
+        <p page="p7">Productos 7</p>
+        <p page="p8">Productos 8</p>
+      </iron-pages>
+    </div>
+  </template>
+
+  <script>
+    class StoreTopProducts extends Polymer.Element {
+      static get is() { return 'store-top-products'; }
+      static get properties() {
+        return {
+          route: {
+            type: Object,
+            notify: true
+          },
+          data: {
+            type: Object
+          },
+          tail: {
+            type: Object
+          }
+        };
+      }
+    }
+
+    window.customElements.define(StoreTopProducts.is, StoreTopProducts);
+  </script>
+</dom-module>
